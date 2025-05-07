@@ -95,7 +95,7 @@ int main() {
     puntos = 1;
 
     // Segundo punto
-    printf("Dame el segundo punto: ");
+    printf("Dame el segundo punto: ");  
     scanf("%f %f", &x_act, &y_act);
     fflush(stdin);
     if (x_act == 0 && y_act == 0) {
@@ -105,9 +105,11 @@ int main() {
     puntos = 2;
 
     // Calcular distancia entre primer y segundo punto
-    if (metrica == 't') d = distancia_taxi(x_ant, y_ant, x_act, y_act);
-    else if (metrica == 'e') d = distancia_euclidea(x_ant, y_ant, x_act, y_act);
-    else d = distancia_maximo(x_ant, y_ant, x_act, y_act);
+    switch (metrica) {
+        case 't': d = distancia_taxi(x_ant, y_ant, x_act, y_act); break;
+        case 'e': d = distancia_euclidea(x_ant, y_ant, x_act, y_act); break;
+        case 'm': d = distancia_maximo(x_ant, y_ant, x_act, y_act); break;
+    }
     longitud += d * factor;
 
     // Siguientes puntos

@@ -2,163 +2,91 @@
 #include <math.h>
 #include <ctype.h>
 
-/*PROYECTO: LONGITUD DE UN CAMINO
+/*PROYECTO: DISTANCIA ENTRE DOS PUNTOS
+Para medir distancias, se han usado varias métricas como la distancia taxi, la distancia euclídea o la distancia del máximo. La forma de calcular cada una de esas distancias en dimensión n >= 2 para los puntos (x1, x2, . . . xn) e (y1, y2, . . . yn) se recoge en la Tabla siguiente.
 
-Vamos a medir la longitud de un camino usando alguna de las métricas que hemos usado en la tarea anterior: la distancia taxi, la distancia euclídea o la distancia del máximo.
 
 DESCRIPCIÓN DE LA ACTIVIDAD
-En esta actividad trabajaremos en dimensión n=2. El programa pide al usuario las unidades de medida usadas, que pueden ser metros, kilómetros o millas, así como la distancia que se va a utilizar para medir la longitud del camino. La distancia puede ser: distancia taxi, distancia euclídea o distancia del máximo. Finalmente, el programa pide las coordenadas de los puntos de un camino. No admitiremos que un nuevo punto del camino esté en la recta que une los dos puntos anteriores del camino. El final del camino se indica con el punto (0, 0) y este punto no pertenece al camino
-El resultado es la longitud del camino calculada con la distancia elegida y expresada en metros.
+En esta actividad trabajaremos en dimensión n=2. El programa pide al usuario las coordenadas de dos puntos, las unidades de medida usadas, que pueden ser metros, kilómetros o millas, así como la distancia que se va a utilizar para medir la distancia entre esos dos puntos. La distancia puede ser: distancia taxi, distancia euclídea o distancia del máximo.
+El resultado es la distancia entre los dos puntos calculada con la distancia elegida y expresada en metros.
 Para ello, diseña y programa en C/C++ un algoritmo que haga las siguientes tareas:
-1.	 Solicite al usuario las unidades que va a utilizar. Los valores posibles son:
+1.	Solicite al usuario las unidades que va a utilizar. Los valores posibles son:
 •	‘k’ o ‘K’ para una distancia en kilómetros
 •	‘a’ o ‘A’ para una distancia en millas
-•	‘m’ o ‘M’ para una distancia en metros
-•	‘z’ para terminar
-2.	 Si el usuario elige una opción distinta de ‘k’ o ‘K’ o ‘a’ o ‘A’ o ‘m’ o ‘M’, vuelve a solicitar el dato excepto si el valor introducido es la letra ‘z’ en cuyo caso termina.
-3.	 Si no ha terminado, solicita la distancia que va a usar. Los valores posibles son:
+•	‘m’ o ‘M’ para una distancia en metros.
+2.	Si el usuario elige una opción distinta de ‘k’ o ‘K’ o ‘a’ o ‘A’ o ‘m’ o ‘M’, muestra un mensaje al usuario indicando que no es una opción válida y termina.
+3.	 En otro caso, solicita la distancia que va a usar Los valores posibles son:
 •	‘t’ para la distancia taxi
 •	‘e’ para la distancia euclídea
 •	‘m’ para la distancia del máximo
-•	‘z’ para terminar
-4.	 Si el usuario elige una opción distinta de ‘t’ o ‘e’ o ‘m’, vuelve a solicitar el dato excepto si el valor introducido es la letra ‘z’ en cuyo caso el programa termina.
-5.	 Si el programa no ha terminado, pide al usuario que introduzca las coordenadas de cada punto y, a continuación, calcula la distancia entre cada dos puntos y acumula ese valor a la longitud del camino. A partir del tercer punto del camino, no se permite que el nuevo punto esté en la recta que une los dos puntos anteriores. Si esto sucede, el programa debe pedir un nuevo punto.
-6.	 El programa finaliza cuando el usuario introduce el punto (0, 0). Este punto NO pertenece al camino. A continuación, muestra la longitud del camino.
+4.	 Si el usuario elige una opción distinta de ‘t’ o ‘e’ o ‘m’, muestra un mensaje al usuario indicando que no es una opción válida y termina.
+5.	 En otro caso, pide al usuario que introduzca las coordenadas de dos puntos y, a continuación, calcula la distancia entre esos dos puntos, la convierte a metros y la muestra en pantalla.
+Se valorará especialmente que el programa no tenga código repetido.
+
 */
 
-// Prototipos
-float distancia_taxi(float x1, float y1, float x2, float y2);
-float distancia_euclidea(float x1, float y1, float x2, float y2);
-float distancia_maximo(float x1, float y1, float x2, float y2);
-int estan_alineados(float x1, float y1, float x2, float y2, float x3, float y3);
-
-/// Main
 int main() {
-    char unidades, metrica;
-    float factor = 1.0; // Para convertir a metros
-    float x_ant = 0, y_ant = 0, x_act = 0, y_act = 0, x_sig = 0, y_sig = 0; // almacenar las coordenadas de los puntos
-    float longitud = 0.0, d = 0.0; // almacenar la longitud del camino y la distancia entre los puntos
-    int puntos = 0; // para contar el numero de puntos
+    char unidades = ' ', distancia = ' ';
+    float x1, y1, x2, y2, distancia_metros; // fabs, sqrt, pow, fmax usan float
 
-    printf("Calculadora de longitudes de caminos\n");
-    while (1) {
-        printf("Dame las unidades: ");
-        printf("k: kilometros\n");
-        printf("a: millas\n");
-        printf("m: metros\n");
-        printf("z: terminar\n");
-        scanf(" %c", &unidades);
-        unidades = tolower(unidades);
-        if (unidades == 'z') {
-            printf("Programa terminado\n");
-            return 0;
-        }
-        if (unidades != 'k' && unidades != 'a' && unidades != 'm') {
-            printf("Opcion no valida\n");
-            continue;
-        }
-        break;
-    }
-    fflush(stdin);
-    if (unidades == 'k') factor = 1000.0;
-    else if (unidades == 'a') factor = 1609.0;
-    else factor = 1.0;
+    printf("Introduce las unidades de medida (k, a, m):\n");
+    printf("k: kilometros\na: millas\nm: metros\n");
+    scanf("%c", &unidades);
+    unidades = tolower(unidades);
 
-    while (1) {
-        printf("Dame la métrica: ");
-        printf("t: distancia taxi\n");
-        printf("e: distancia euclidea\n");
-        printf("m: distancia del maximo\n");
-        printf("z: terminar\n");
-        scanf(" %c", &metrica);
-        metrica = tolower(metrica);
-        if (metrica == 'z') {
-            printf("Programa terminado\n");
-            return 0;
-        }
-        if (metrica != 't' && metrica != 'e' && metrica != 'm') {
-            printf("Opcion no valida\n");
-            continue;
-        }
-        break;
+    if (unidades != 'k' && unidades != 'a' && unidades != 'm') {
+        printf("No es una opcion valida");
+        return 1;
     }
     fflush(stdin);
 
-    // Primer punto
-    printf("Dame el primer punto: ");
-    scanf("%f %f", &x_ant, &y_ant);
+    printf("Introduce la distancia que va a usar (t, e, m):\n");
+    printf("t: distancia taxi\ne: distancia euclidea\nm: distancia del maximo\n");
+    scanf("%c", &distancia);
+    distancia = tolower(distancia);
     fflush(stdin);
-    if (x_ant == 0 && y_ant == 0) {
-        printf("Programa terminado\n");
-        return 0;
-    }
-    puntos = 1;
 
-    // Segundo punto
-    printf("Dame el segundo punto: ");  
-    scanf("%f %f", &x_act, &y_act);
+    if (distancia != 't' && distancia != 'e' && distancia != 'm') {
+        printf("No es una opcion valida");
+        return 1;
+    }
+
+    printf("Introduce las coordenadas del punto 1 (x1, y1): ");
+    scanf("%f %f", &x1, &y1);
     fflush(stdin);
-    if (x_act == 0 && y_act == 0) {
-        printf("Programa terminado\n");
-        return 0;
-    }
-    puntos = 2;
 
-    // Calcular distancia entre primer y segundo punto
-    switch (metrica) {
-        case 't': d = distancia_taxi(x_ant, y_ant, x_act, y_act); break;
-        case 'e': d = distancia_euclidea(x_ant, y_ant, x_act, y_act); break;
-        case 'm': d = distancia_maximo(x_ant, y_ant, x_act, y_act); break;
-    }
-    longitud += d * factor;
-
-    // Siguientes puntos
-    while (1) {
-        printf("Dame el siguiente punto: ");
-        scanf("%f %f", &x_sig, &y_sig);
-        fflush(stdin);
-        if (x_sig == 0 && y_sig == 0) {
+    printf("Introduce las coordenadas del punto 2 (x2, y2): ");
+    scanf("%f %f", &x2, &y2);
+    fflush(stdin);
+    
+    switch (unidades) {
+        case 'k': //kilometros a metros
+            x1 *= 1000;
+            y1 *= 1000;
+            x2 *= 1000;
+            y2 *= 1000;
             break;
-        }
-        // Verificar alineación a partir del tercer punto
-        if (puntos >= 2 && estan_alineados(x_ant, y_ant, x_act, y_act, x_sig, y_sig)) {
-            printf("El punto esta alineado con los dos anteriores, introduce otro punto.\n");
-            continue;
-        }
-        // Calcular distancia y acumular
-        switch (metrica) {
-            case 't': d = distancia_taxi(x_act, y_act, x_sig, y_sig); break;
-            case 'e': d = distancia_euclidea(x_act, y_act, x_sig, y_sig); break;
-            case 'm': d = distancia_maximo(x_act, y_act, x_sig, y_sig); break;
-        }
-        longitud += d * factor;
-        // Actualizar puntos
-        x_ant = x_act;
-        y_ant = y_act;
-        x_act = x_sig;
-        y_act = y_sig;
-        puntos++;
+        case 'a': //millas a metros
+            x1 *= 1609.34;
+            y1 *= 1609.34;
+            x2 *= 1609.34;
+            y2 *= 1609.34;
+            break;
+        case 'm': //metros, no se convierte
+            break;
+    }  
+
+    switch (distancia) {
+        case 't':
+            distancia_metros = fabs(x1 - x2) + fabs(y1 - y2); //distancia taxi, suma de las diferencias absolutas de las coordenadas
+            break;
+        case 'e':
+            distancia_metros = sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2)); //distancia euclidea, raiz de la suma de las diferencias al cuadrado de las coordenadas
+            break;
+        case 'm':
+            distancia_metros = fmax(fabs(x1 - x2), fabs(y1 - y2)); //distancia del maximo, maximo de las diferencias absolutas de las coordenadas
+            break;
     }
-    printf("La longitud es %.0f metros.\n", longitud);
-    return 0;
-}
 
-float distancia_taxi(float x1, float y1, float x2, float y2) {
-    return fabs(x1 - x2) + fabs(y1 - y2);
-}
-
-float distancia_euclidea(float x1, float y1, float x2, float y2) {
-    return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
-}
-
-float distancia_maximo(float x1, float y1, float x2, float y2) {
-    float dx = fabs(x1 - x2);
-    float dy = fabs(y1 - y2);
-    return dx > dy ? dx : dy; //devuelve el maximo de los dos valores (dx o dy) mediante un operador ternario
-}
-
-// Devuelve 1 si están alineados, 0 si no
-int estan_alineados(float x1, float y1, float x2, float y2, float x3, float y3) {
-    float det = (x1 - x2) * (y3 - y2) - (y1 - y2) * (x3 - x2); //determinante
-    return fabs(det) < 1e-6; //si el determinante es menor que 1e-6, los puntos estan alineados (1e-6 es una tolerancia)
+    printf("La distancia entre los dos puntos es: %i metros\n", (int)distancia_metros); //convierto a int para que no salgan decimales
 }

@@ -37,41 +37,55 @@ transacciones = {'15/05/2024': 100,
 
 def ordernarFecha():
     global transacciones
-    items = list(transacciones.items()) # Convertir el diccionario a una lista de tuplas (fecha, monto)
-    items.sort(key=lambda x: datetime.strptime(x[0], '%d/%m/%Y')) # Convertir las fechas a datetime para ordenar, key es el valor de la tupla que se va a ordenar y lambda es una funcion anonima que recibe x y devuelve x[0] que es la fecha
-    transacciones = dict(items) # Reconstruir el diccionario ordenado
+    fechas_datetime = [datetime.strptime(fecha, '%d/%m/%Y') for fecha in transacciones.keys()] # Convertir fechas a datetime para ordenar
+    fechas_ordenadas = shell(fechas_datetime) # Ordenar fechas usando Shell
+    nuevo_dict = {} # Crear nuevo diccionario ordenado
+    for fecha in fechas_ordenadas:
+        fecha_str = fecha.strftime('%d/%m/%Y')
+        nuevo_dict[fecha_str] = transacciones[fecha_str]
+    transacciones = nuevo_dict
     return transacciones
 
 def ordernarMonto():
     global transacciones
-    items = list(transacciones.items()) # Convertir el diccionario a una lista de tuplas (fecha, monto)
-    items.sort(key=lambda x: x[1]) # Ordenar por monto, key es el valor de la tupla que se va a ordenar y lambda es una funcion anonima que recibe x y devuelve x[1] que es el monto
-    transacciones = dict(items) # Reconstruir el diccionario ordenado
+    items = [(monto, fecha) for fecha, monto in transacciones.items()] # Convertir a lista de tuplas (monto, fecha) para ordenar por monto
+    montos_ordenados = shell([monto for monto, _ in items]) # Ordenar montos usando Shell
+    nuevo_dict = {} # Crear nuevo diccionario ordenado
+    for monto in montos_ordenados:
+        for fecha, m in transacciones.items():
+            if m == monto and fecha not in nuevo_dict:
+                nuevo_dict[fecha] = monto
+                break
+    transacciones = nuevo_dict
     return transacciones
 
 def buscarFecha(fecha):
     global transacciones
     fecha = str(fecha)
-    fecha_buscar = datetime.strptime(fecha, '%d/%m/%Y')# Convertir las fechas a datetime para comparación
-    for i, (fecha_dict, monto) in enumerate(transacciones.items()): #enumerate es una funcion que devuelve un iterador de tuplas (indice, valor), i es el indice y fecha_dict es la fecha y monto es el monto
-        if datetime.strptime(fecha_dict, '%d/%m/%Y') == fecha_buscar:
-            return f"La fecha {fecha} se encuentra en la posición {i} con monto {monto}"
+    fecha_buscar = datetime.strptime(fecha, '%d/%m/%Y') # Convertir fecha a datetime para búsqueda
+    fechas_lista = [datetime.strptime(f, '%d/%m/%Y') for f in transacciones.keys()] # Convertir todas las fechas a datetime para búsqueda
+    posicion = BusquedaSecuencial(fechas_lista, fecha_buscar) # Buscar usando búsqueda secuencial
+    if posicion != -1:
+        fecha_encontrada = list(transacciones.keys())[posicion]
+        return f"La fecha {fecha} se encuentra en la posición {posicion} con monto ${transacciones[fecha_encontrada]}"
     return f"La fecha {fecha} no se encuentra en la lista"
 
 def buscarMonto(monto):
     global transacciones
     monto = int(monto)
-    for i, (fecha, monto_dict) in enumerate(transacciones.items()):
-        if monto_dict == monto:
-            return f"El monto {monto} se encuentra en la posición {i} con fecha {fecha}"
-    return f"El monto {monto} no se encuentra en la lista"
+    montos_lista = list(transacciones.values()) # Convertir montos a lista para búsqueda
+    posicion = BusquedaSecuencial(montos_lista, monto) # Buscar usando búsqueda secuencial
+    if posicion != -1:
+        fecha_encontrada = list(transacciones.keys())[posicion]
+        return f"El monto ${monto} se encuentra en la posición {posicion} con fecha {fecha_encontrada}"
+    return f"El monto ${monto} no se encuentra en la lista"
 
 def main():
     while True:
         print("\nBienvenido al sistema de transacciones")
         print("Transacciones actuales:")
         for fecha, monto in transacciones.items():
-            print(f"Fecha: {fecha}, Monto: {monto}")
+            print(f"Fecha: {fecha}, Monto: ${monto}")
         print("\n1. Ordenar por fecha")
         print("2. Ordenar por monto")
         print("3. Buscar por fecha")
@@ -82,11 +96,11 @@ def main():
             case 1:
                 print("\nTransacciones ordenadas por fecha:")
                 for fecha, monto in ordernarFecha().items():
-                    print(f"Fecha: {fecha}, Monto: {monto}")
+                    print(f"Fecha: {fecha}, Monto: ${monto}")
             case 2:
                 print("\nTransacciones ordenadas por monto:")
                 for fecha, monto in ordernarMonto().items():
-                    print(f"Fecha: {fecha}, Monto: {monto}")
+                    print(f"Fecha: {fecha}, Monto: ${monto}")
             case 3:
                 fecha = input("Ingrese una fecha (formato dd/mm/yyyy): ")
                 print(buscarFecha(fecha))

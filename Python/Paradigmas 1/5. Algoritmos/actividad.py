@@ -1,15 +1,16 @@
 from datetime import datetime
 
 import sys
-sys.path.insert(0, "./Metodos")
-sys.path.insert(0, "./Busquedas")
+sys.path.insert(0, "./Metodos") # Reconoce el directorio de los métodos
+sys.path.insert(0, "./Busquedas") # Reconoce el directorio de las búsquedas
 
-from Metodos.MetodoShell import shell
-from Metodos.MetodoQuicksort import quicksort
-from Busquedas.BusquedaSecuencial import BusquedaSecuencial
-from Busquedas.BusquedaBinaria import busquedaBinaria
+from Metodos.MetodoShell import shell # Importa el método de Shell
+from Metodos.MetodoQuicksort import quicksort # Importa el método de Quicksort, no es usado en este programa
+from Busquedas.BusquedaSecuencial import BusquedaSecuencial # Importa la búsqueda secuencial
+from Busquedas.BusquedaBinaria import busquedaBinaria # Importa la búsqueda binaria, no es usado en este programa
 
 """
+Consigna:
 Un emprendimiento de venta online guarda información de las transacciones realizadas por fecha y monto. Necesita:
 • ordenar los datos por fecha o monto
 • mostrar los datos ordenados por fecha o monto
@@ -26,10 +27,11 @@ Y un algoritmo de búsqueda
 
 Elaborar una propuesta de la solución al problema, en Python, utilizando los algoritmos seleccionados.
 """
+
 fechas = ['15/05/2024', '10/12/2025', '20/05/2024', '12/07/2024', '05/05/2024', '15/05/2025']
 montos = [100, 740, 200, 1000, 400, 500]
     
-
+#Decidi usar el metodo de shell para ordenar las fechas y los montos, ya que es un metodo logaritmico y es mas eficiente para ordenar grandes cantidades de datos
 def ordernarFecha():
     global fechas
     fechas_datetime = [datetime.strptime(fecha, '%d/%m/%Y') for fecha in fechas] # Convertir las fechas a datetime
@@ -42,6 +44,7 @@ def ordernarMonto():
     montos = shell(montos)
     return montos
 
+#Decidi usar la busqueda secuencial para buscar las fechas y los montos, ya que es un metodo lineal y es mas eficiente para buscar pequeñas cantidades de datos
 def buscarFecha(fecha):
     global fechas
     fecha = str(fecha)

@@ -44,6 +44,7 @@ def ordernarFecha():
         fecha_str = fecha.strftime('%d/%m/%Y')
         nuevo_dict[fecha_str] = transacciones[fecha_str]
     transacciones = nuevo_dict
+    del nuevo_dict # liberar espacio de memoria
     return transacciones
 
 def ordernarMonto():
@@ -57,6 +58,7 @@ def ordernarMonto():
                 nuevo_dict[fecha] = monto
                 break
     transacciones = nuevo_dict
+    del nuevo_dict # liberar espacio de memoria
     return transacciones
 
 def buscarFecha(fecha):

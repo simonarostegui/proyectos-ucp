@@ -9,6 +9,9 @@ from Metodos.MetodoQuicksort import quicksort # Importa el método de Quicksort,
 from Busquedas.BusquedaSecuencial import BusquedaSecuencial # Importa la búsqueda secuencial
 from Busquedas.BusquedaBinaria import busquedaBinaria # Importa la búsqueda binaria, no es usado en este programa
 
+import os
+clear = lambda: os.system('cls')
+
 """
 Consigna:
 Un emprendimiento de venta online guarda información de las transacciones realizadas por fecha y monto. Necesita:
@@ -99,16 +102,24 @@ def main():
                 print("\nTransacciones ordenadas por fecha:")
                 for fecha, monto in ordernarFecha().items():
                     print(f"Fecha: {fecha}, Monto: ${monto}")
+                input("Presione Enter para continuar...")
+                clear()
             case 2:
                 print("\nTransacciones ordenadas por monto:")
                 for fecha, monto in ordernarMonto().items():
                     print(f"Fecha: {fecha}, Monto: ${monto}")
+                input("Presione Enter para continuar...")
+                clear()
             case 3:
                 fecha = input("Ingrese una fecha (formato dd/mm/yyyy): ")
                 print(buscarFecha(fecha))
+                input("Presione Enter para continuar...")
+                clear()
             case 4:
                 monto = input("Ingrese un monto: ")
                 print(buscarMonto(monto))
+                input("Presione Enter para continuar...")
+                clear()
             case 5:
                 print("Saliendo...")
                 break
